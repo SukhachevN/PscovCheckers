@@ -75,10 +75,11 @@ public class PscovCheckers extends Application {
         int y0 = toBoard(piece.getOldY());
         double dist = Math.sqrt(Math.abs(newX - x0)*Math.abs(newX - x0) + Math.abs(newY - y0)*Math.abs(newY - y0));
         System.out.println(dist);
-        if (board[newX][newY].hasPiece()|| ((newX==0||newX==6)&&(newY==0||newY==1||newY==5||newY==6))
-        		||((newX==1||newX==5)&&(newY==0||newY==6))
-        	
+        if (board[newX][newY].hasPiece()|| ((newX==0||newX==6)&&(newY==0||newY==1||newY==6))
+        		||(newX==1||newX==5)&&(newY==0||newY==6) || (x0%2==1 &&newX%2==0 &&piece.getType().equals(application.PieceType.BLACK) && newY==y0)
+        				|| (x0%2==0 &&newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0)
         ) {
+        	System.out.println("Так ходить нельзя!");
             return new MoveResult(MoveType.NONE);
         }
 
@@ -86,15 +87,16 @@ public class PscovCheckers extends Application {
        	 if((piece.getType().equals(application.PieceType.WHITE)&&newY<=y0)||(piece.getType().equals(application.PieceType.BLACK)&&newY>=y0))
             return new MoveResult(MoveType.NORMAL);
         }
-         if (dist==2) {
+         if (dist==2&&newX==x0) {
 
             int x1 = newX;
             int y1 = newY-1;
 
             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            	if(board[newX][newY+1].hasPiece()&&newY<y0&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
+            	if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
             		y1=newY+1;
             	}
+            	if(Math.abs(y0-y1)<=2)
                 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
             }
              x1 = newX;
@@ -104,12 +106,11 @@ public class PscovCheckers extends Application {
             	if(board[newX][newY-1].hasPiece()&&board[newX][newY-1].getPiece().getType()!= piece.getType()) {
             		y1=newY-1;
             	}
+            	if(Math.abs(y0-y1)<=2)
                 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
             }
            
         }
-         
-
         return new MoveResult(MoveType.NONE);
     }
 
