@@ -91,6 +91,9 @@ public class PscovCheckers extends Application {
 
             int x1 = newX;
             int y1 = newY-1;
+            if(y1<0) {
+            	y1=newY+1;
+            }
 
             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
             	if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
@@ -101,6 +104,9 @@ public class PscovCheckers extends Application {
             }
              x1 = newX;
              y1 = newY+1;
+             if(y1>6) {
+            	 y1=newY-1;
+             }
 
             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
             	if(board[newX][newY-1].hasPiece()&&board[newX][newY-1].getPiece().getType()!= piece.getType()) {
@@ -111,6 +117,48 @@ public class PscovCheckers extends Application {
             }
            
         }
+         if(dist==Math.sqrt(5)) {
+        	 int checks = 0;
+        	 int x1 = newX-1;
+             int y1 = newY;
+        	 do {
+        		 x1=newX-1;
+        		 System.out.println(y1);
+             if(newX-1<0) {
+            	 x1=newX+1;
+             }
+             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+            	 if(newX+1<=6)
+            	 if(board[newX+1][newY].hasPiece()&&board[newX+1][newY].getPiece().getType()!= piece.getType()) {
+             		x1=newX+1;
+             	}
+            	 if((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)<=5)
+            	 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+             }
+             x1 = newX+1;
+             if(x1>6) {
+            	 x1=newX-1;
+             }
+             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+            	 if(board[newX-1][newY].hasPiece()&&board[newX-1][newY].getPiece().getType()!= piece.getType()) {
+              		x1=newX-1;
+              	}
+            	 if((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)<=5)
+            	 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+             }
+             if (checks==1 && newY-1>=0) {
+             y1=newY-1;
+             }
+             if (checks==2 && newY+1<=6) {
+                 y1=newY+1;
+                 }
+             checks++;
+             
+             } while (checks<3);
+         }
+         if(dist==Math.sqrt(8)) {
+        	 
+         }
         return new MoveResult(MoveType.NONE);
     }
 
