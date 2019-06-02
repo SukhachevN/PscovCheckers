@@ -16,6 +16,7 @@ public class PscovCheckers extends Application {
         for (int y = 0; y < 7; y++) {
             for (int x = 0; x < 7; x++) {
                 Tile tile = new Tile(x, y);
+                tile.setInfo(x%2==1 ? y+1  : y+0.5);
                 board[x][y] = tile;
                 tileGroup.getChildren().add(tile);
                 Piece piece = null;
@@ -26,7 +27,7 @@ public class PscovCheckers extends Application {
                 }
                 if (y >= 4 ) {
                 	if((x==0||x==6)&&y==5 || (x==1||x==5)&&(y<6) || (x==2||x==4)&&(y>4) || x==3) {
-                    piece = makePiece(PieceType.WHITE, x, y);
+                        piece = makePiece(PieceType.WHITE, x, y);
                 	}
                 }
                 if (piece != null) {
@@ -43,82 +44,73 @@ public class PscovCheckers extends Application {
         double dist = Math.sqrt(Math.abs(newX - x0)*Math.abs(newX - x0) + Math.abs(newY - y0)*Math.abs(newY - y0));
         System.out.println(dist);
         if (board[newX][newY].hasPiece()|| ((newX==0||newX==6)&&(newY==0||newY==1||newY==6))
-        		||(newX==1||newX==5)&&(newY==0||newY==6) || 
-        		(x0%2==1 &&newX%2==0 &&piece.getType().equals(application.PieceType.BLACK) && newY==y0)
-        		|| (x0%2==0 &&newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0)
+        		||(newX==1||newX==5)&&(newY==0||newY==6) 
+        		||(x0%2==1 &&newX%2==0 &&piece.getType().equals(application.PieceType.BLACK) && newY==y0)
+        		|| (x0%2==0 && newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0) 
+        		||Math.abs(board[newX][newY].getInfo()-board[x0][y0].getInfo())==1.5
         ) {
         	System.out.println("Так ходить нельзя!");
             return new MoveResult(MoveType.NONE);
         }
         if (!board[newX][newY].hasPiece()&&dist<2) {
        	 if((piece.getType().equals(application.PieceType.WHITE)&&newY<=y0)||
-       		(piece.getType().equals(application.PieceType.BLACK)&&newY>=y0))
-            return new MoveResult(MoveType.NORMAL);
+       		     (piece.getType().equals(application.PieceType.BLACK)&&newY>=y0))
+             return new MoveResult(MoveType.NORMAL);
         }
          if (dist==2&&newX==x0) {
-            int x1 = newX;
-            int y1 = newY-1;
-            if(y1<0) {
-            	y1=newY+1;
-            }
-            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            	if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
-            		y1=newY+1;
-            	}
-            	if(Math.abs(y0-y1)<=2)
-                return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
-            }
-             x1 = newX;
-             y1 = newY+1;
-             if(y1>6) {
-            	 y1=newY-1;
-             }
-            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            	if(board[newX][newY-1].hasPiece()&&board[newX][newY-1].getPiece().getType()!= piece.getType()) {
-            		y1=newY-1;
-            	}
-            	if(Math.abs(y0-y1)<=2)
-                return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
-            }
-        }
-         if(dist==Math.sqrt(5)) {
-        	 int checks = 0;
-             int y1 = newY;
-        	 do {
-        		 System.out.println(y1);
-        		int x1=newX-1;
-             if(newX-1<0) {
-            	 x1=newX+1;
+             int x1 = newX;
+             int y1 = newY-1;
+             if(y1<0) {
+             	 y1=newY+1;
              }
              if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            	 if(newX+1<=6)
-            	 if(board[newX+1][newY].hasPiece()&&board[newX+1][newY].getPiece().getType()!= piece.getType()) {
-             		x1=newX+1;
-             	}
-            	 if((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)<5)
-            	 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+             	 if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
+             		 y1=newY+1;
+             	 }
+             	 if(Math.abs(y0-y1)<=2)
+             		return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
              }
-             x1 = newX+1;
-             if(x1>6) {
-            	 x1=newX-1;
-             }
-             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            	 if(board[newX-1][newY].hasPiece()&&board[newX-1][newY].getPiece().getType()!= piece.getType()) {
-              		x1=newX-1;
-              	}
-            	 if((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)<5)
-            	 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
-             }
-             if (checks==1 && newY-1>=0) {
-            	 y1=newY-1;
-             }
-             if (checks==2 && newY+1<=6) {
-                y1=newY+1;
-             }
-             checks++;
-             } while (checks<4);
+              x1 = newX;
+              y1 = newY+1;
+              if(y1>6) {
+             	  y1=newY-1;
+              }
+              if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+             	  if(board[newX][newY-1].hasPiece()&&board[newX][newY-1].getPiece().getType()!= piece.getType()) {
+             		  y1=newY-1;
+             	  }
+             	  if(Math.abs(y0-y1)<=2)
+             		 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+              }
          }
-        return new MoveResult(MoveType.NONE);
+         if(dist==Math.sqrt(5)) {
+        	 for (int i = 0;i<5;i++) {
+        		 int x1 = (newX - 1 >= 0) ? newX - 1 : newX + 1;
+            	 int y1 = newY;
+            	 if(i==0) {
+            		  y1 = newY;
+            	 }
+            	 if(i==1) {
+            		  y1 = (newY -1 > 0 ) ? newY - 1 : newY + 1;
+            	 }
+            	 if(i==2) {
+            		  y1 = (newY + 1 < 7 ) ? newY + 1 : newY - 1;
+            	 }
+            	 if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+            		 if ( Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) < 4 
+            				  && Math.abs(board[newX][newY].getInfo()-board[x0][y0].getInfo())!=1.5 )
+            			 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+            	 }
+            	 x1 = (newX + 1 <= 6) ? newX + 1 : newX - 1;
+            	 if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+            		 if ( Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) < 4 
+            				   && Math.abs(board[newX][newY].getInfo()-board[x0][y0].getInfo())!=1.5 )
+            			 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
+            	 } 
+        	 }
+         }
+         System.out.println("Так ходить нельзя!");
+         return new MoveResult(MoveType.NONE);
     }
     private int toBoard(double pixel) {
         return (int)(pixel + 100 / 2) / 100;
@@ -147,7 +139,7 @@ public class PscovCheckers extends Application {
                     piece.abortMove();
                     break;
                 case NORMAL:
-                    piece.move(newX, newY);
+                    piece.move(newX, newY); 
                     board[x0][y0].setPiece(null);
                     board[newX][newY].setPiece(piece);
                     break;

@@ -20,7 +20,12 @@ public class Piece extends StackPane {
         this.type = type;
         move(x, y);
         Circle crcl = new Circle(30);
-        crcl.setFill(type == PieceType.BLACK ? Color.BLACK : Color.WHITE);
+        if(type==PieceType.BLACK) {
+        	 crcl.setFill(Color.BLACK);
+        }
+        if(type==PieceType.WHITE) {
+       	 crcl.setFill(Color.WHITE);
+       }
         crcl.setStroke(Color.BLACK);
         crcl.setStrokeWidth(3);
         crcl.setTranslateX(20);
@@ -35,18 +40,14 @@ public class Piece extends StackPane {
         });
     }
     public void move(int x, int y) {
-    	for(int i = 0;i<7;i++) {
     		int b = 25-5*x;
-    		if(x==i) {
     			oldX =x*100+b;
-        		if(i%2==0) {
+        		if(x%2==0) {
         			oldY = y * 100-50;
         		}
         		else {
         			oldY = y * 100;
         	    }
-        	}
-        }
         relocate(oldX, oldY);
     }
     public void abortMove() {
