@@ -35,6 +35,7 @@ public class Piece extends StackPane {
             mouseX = e.getSceneX();
             mouseY = e.getSceneY();
         });
+        if(type == application.PieceType.WHITE)
         setOnMouseDragged(e -> {
             relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
         });
