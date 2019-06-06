@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 public class PscovCheckers extends Application {
     private Tile[][] board = new Tile[7][7];
-    public int check = 0;
     private Group tileGroup = new Group();
     private Group pieceGroup = new Group();
     private Parent createContent() {
@@ -46,7 +45,7 @@ public class PscovCheckers extends Application {
         double dist = Math.sqrt(Math.abs(newX - x0)*Math.abs(newX - x0) + Math.abs(newY - y0)*Math.abs(newY - y0));
         System.out.println(dist);
         if (board[newX][newY].hasPiece()|| ((newX==0||newX==6)&&(newY==0||newY==1||newY==6))
-        		||(newX==1||newX==5)&&(newY==0||newY==6) 
+        		||(newX==1||newX==5)&&(newY==0||newY==6) || (newY==0 && newX!=3)
         		||(x0%2==1 &&newX%2==0 &&piece.getType().equals(application.PieceType.BLACK) && newY==y0)
         		|| (x0%2==0 && newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0) 
         		||Math.abs(board[newX][newY].getInfo()-board[x0][y0].getInfo())==1.5
@@ -54,7 +53,6 @@ public class PscovCheckers extends Application {
         	System.out.println("Так ходить нельзя!");
             return new MoveResult(MoveType.NONE);
         }
-        this.check = check + 1; 
         if (!board[newX][newY].hasPiece()&&dist<2) {
        	 if((piece.getType().equals(application.PieceType.WHITE)&&newY<=y0)||
        		     (piece.getType().equals(application.PieceType.BLACK)&&newY>=y0))
@@ -121,7 +119,6 @@ public class PscovCheckers extends Application {
         	 }
          }
          System.out.println("Так ходить нельзя!");
-         this.check = check - 1;
          return new MoveResult(MoveType.NONE);
     }
     private int toBoard(double pixel) {
@@ -144,7 +141,7 @@ public class PscovCheckers extends Application {
     }
     private Piece computer() {
     	int y1 = 0;
-    	for(int i = 6;i>0;i--) {
+    	for(int i = (int) (Math.random()*6);i>0;i--) {
     		if(checkLine(i)) {
     			y1=i;
     			break;
@@ -152,12 +149,37 @@ public class PscovCheckers extends Application {
     	}
     	int x1 = randomPiece(y1);
     	Piece piece = new Piece(application.PieceType.BLACK, x1, y1);
-    	if(!board[x1][y1].hasPiece()) {
+    	if(!board[x1][y1].hasPiece() || board[x1][y1].getPiece().getType()==application.PieceType.WHITE) {
+    		try {
+    		computer();
+    		} catch (java.lang.StackOverflowError e) {
+    			return null;
+    		}
     		return null;
     	}
-    	 int newX = x1;
+    	 int newX = randomX(x1,y1);
     	 System.out.println(newX);
-         int newY = y1+1;
+         int newY = y1 + randomY(x1,y1);
+         if (newY==y1 && newX==x1) {
+        	 for(int i=0;i<Math.random()*3;i++) {
+        		 newX = randomX(x1,y1);
+        		 if(newX!=x1) {
+        			 break;
+        		 }
+        	 }
+        	 if (newX==x1) {
+        		 newY+=1;
+        	 }
+         }
+         if(y1+2 <= 6 && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
+        		 !board[x1][y1+2].hasPiece() ) {
+        	 newY = y1 + 2;
+         }
+         if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
+        		 !board[x1][y1-2].hasPiece() ) {
+        	 newY = y1 - 2;
+         }
+         
          MoveResult result;
          if (newX < 0 || newY < 0 || newX >= 7 || newY >= 7) {
              result = new MoveResult(MoveType.NONE);
@@ -167,6 +189,11 @@ public class PscovCheckers extends Application {
          switch (result.getType()) {
              case NONE:
                  piece.abortMove();
+                 try {
+             		computer();
+             		} catch (java.lang.StackOverflowError e) {
+             			return null;
+             		}
                  break;
              case NORMAL:
             	 if(board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].hasPiece()) {
@@ -183,16 +210,22 @@ public class PscovCheckers extends Application {
              case KILL:
                  piece.move(newX, newY);
                  board[x1][y1].setPiece(null);
+                 if(board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].hasPiece()) {
+              		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].getPiece().setOpacity(0.0);
+              		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].setPiece(null);
+              		pieceGroup.getChildren().remove(piece);
+              	}
+                 pieceGroup.getChildren().remove(piece);
                  board[newX][newY].setPiece(piece);
+                 pieceGroup.getChildren().add(piece);
                  Piece otherPiece = result.getPiece();
                  board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
                  pieceGroup.getChildren().remove(otherPiece);
                  break;
          }
-         check++;
 		return piece;
     }
-    private int randomX(int x) {
+    private int randomX(int x , int y) {
     	int a = (int) (Math.random()*2 - 1);
     	if(x+1>6) {
     		a = (int) (-1 + Math.random());
@@ -200,18 +233,24 @@ public class PscovCheckers extends Application {
     	if(x-1<0) {
     		a = (int) Math.random();
     	}
+    	if(board[x][y].getInfo()%1!=0.5 || board[x+a][y].hasPiece()) {
+    		a = 0;
+    	}
 		return (int) (x + a);
     }
-    private int randomY(int y, int x) {
-    	
-		return x;
+    private int randomY(int x, int y) {
+    	int random = 0;
+    	if(board[x][y].getInfo()%1!=0.5) {
+    		random = (int) Math.random();
+    	}
+		return random;
     }
     private int randomPiece(int line) {
     	int x = 3;
-    		if(line==3 ||line==2|| line == 4) {
+    		if(line==3 ||line==2|| line == 4 || line == 5) {
         		x = (int) (Math.random()*7);
         	}
-        	if(line==1|| line == 5) {
+        	if(line==1) {
         		x = (int) ( 1 + Math.random()*4);
         	}
 		return x;
@@ -237,9 +276,7 @@ public class PscovCheckers extends Application {
                     piece.move(newX, newY); 
                     board[x0][y0].setPiece(null);
                     board[newX][newY].setPiece(piece);
-                    if(check % 2 == 1) {
-                		computer();
-                	}
+                    computer();
                     break;
                 case KILL:
                     piece.move(newX, newY);
@@ -248,6 +285,7 @@ public class PscovCheckers extends Application {
                     Piece otherPiece = result.getPiece();
                     board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
                     pieceGroup.getChildren().remove(otherPiece);
+                    computer();
                     break;
             }
         });
