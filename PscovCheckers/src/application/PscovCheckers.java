@@ -69,7 +69,7 @@ public class PscovCheckers extends Application {
              	 if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
              		 y1=newY+1;
              	 }
-             	 if(Math.abs(y0-y1)<=2)
+             	 if(Math.abs(y0-y1)==1)
              		 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
              }
               x1 = newX;
