@@ -89,27 +89,31 @@ public class PscovCheckers extends Application {
         		 int x1 = (newX - 1 >= 0) ? newX - 1 : newX + 1;
             	 int y1 = newY;
             	 if(i==0) {
-            		 if(newY>y0) {
-            			 y1 = (newY + 1 < 7 ) ? newY + 1 : newY - 1;
-            		 }else y1 = newY;
+            		 y1 = newY;
             	 }
             	 if(i==1) {
-            		 y1 = (newY -1 > 0 ) ? newY - 1 : newY + 1;
+            		 if(newY>y0) {
+            			 y1 = (newY -1 >=0 ) ? newY -1 : newY;
+            		 }
             	 }
             	 if(i==2) {
-            		 if(newY>y0) {
-            			 y1 = newY;
-            		 }else y1 = (newY + 1 < 7 ) ? newY + 1 : newY - 1;
+            		 if(newY<y0) {
+            			 y1 = (newY + 1 <= 6 ) ? newY + 1 : newY;
+            		 }
             	 }
             	 if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            		 if ( Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) < 4)
+            		 if (Math.abs(board[x0][y0].getInfo()-board[x1][y1].getInfo())!=1.5 
+            				 && Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) <= 4 )
             			 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
             	 }
-            	 x1 = (newX + 1 <= 6) ? newX + 1 : newX - 1;
+        		 x1 = (newX + 1 <= 6) ? newX + 1 : newX - 1;
+        		 System.out.println(x1);
+        		 System.out.println(y1);
             	 if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-            		 if ( Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) < 4)
+            		 if (Math.abs(board[x0][y0].getInfo()-board[x1][y1].getInfo())!=1.5 
+            				 && Math.abs(x1 - x0)*Math.abs(x1 - x0) + Math.abs(y1 - y0)*Math.abs(y1 - y0) <= 4 )
             			 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
-            	 } 
+            	 } 	 
         	 }
          }
          System.out.println("Так ходить нельзя!");
@@ -132,6 +136,10 @@ public class PscovCheckers extends Application {
         primaryStage.setTitle("PscovCheckers");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    private boolean scan(int x,int y) {
+    	
+    	return false;
     }
     private Piece computer() {
     	int y1 = 0;
@@ -169,40 +177,43 @@ public class PscovCheckers extends Application {
         	 if(y1+2 <= 6 && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
             		 !board[x1][y1+2].hasPiece() ) {
             	 newY = y1 + 2;
+             }else {
+            	 if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
+                		 !board[x1][y1-2].hasPiece() ) {
+                	 newY = y1 - 2;
+                 }
              }
-             if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
-            		 !board[x1][y1-2].hasPiece() ) {
-            	 newY = y1 - 2;
-             }
-             for(int i = 0;i<3;i++) {
-            	 if(i==0) {
-            		 newY=(y1+1<=7) ? y1+1 : y1;
-            	 }
-                 if(i==1) {
-            		 newY=y1;
-            	 }
-                 if(i==2) {
-                	 newY=(y1-1>=0) ?y1-1 : y1;
-                 }
-                 if(newY <= 6 && x1-2>=0  && board[x1-1][newY].hasPiece() && board[x1-1][newY].getPiece().getType()!= piece.getType() &&
-                		 !board[x1-2][newY].hasPiece()) {
-                	 newX = x1-2;
-                	 if(board[x1-1][newY-1].hasPiece() && board[x1-1][newY-1].getPiece().getType()== piece.getType() ||
-                			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())==0.5) {
-                		 newX=x1;
+        	 if(newY!=y1+2||newY!=y1-2) {
+        		 for(int i = 0;i<3;i++) {
+                	 if(i==0) {
+                		 newY=y1;
                 	 }
-                	 break;
-                 }
-                 if(newY <= 6 && x1+2>=0  && board[x1+1][newY].hasPiece() && board[x1+1][newY].getPiece().getType()!= piece.getType() &&
-                		 !board[x1+2][newY].hasPiece()) {
-                	 newX = x1+2;
-                	 if(board[x1+1][newY-1].hasPiece() && board[x1+1][newY-1].getPiece().getType()== piece.getType()||
-                			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())==0.5) {
-                		 newX=x1;
+                     if(i==1) {
+                		 newY=(y1+1<=7) ? y1+1 : y1;
                 	 }
-                	 break;
-                 }
-             }  
+                     if(i==2) {
+                    	 newY=(y1-1>=0) ?y1-1 : y1;
+                     }
+                     if(newY <= 6 && x1-2>=0  && board[x1-1][newY].hasPiece() && board[x1-1][newY].getPiece().getType()!= piece.getType() &&
+                    		 !board[x1-2][newY].hasPiece()) {
+                    	 newX = x1-2;
+                    	 if(board[x1-1][newY-1].hasPiece() && board[x1-1][newY-1].getPiece().getType()== piece.getType() ||
+                    			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())!=0.5) {
+                    		 newX=x1;
+                    	 }
+                    	 break;
+                     }
+                     if(newY <= 6 && x1+2>=0  && board[x1+1][newY].hasPiece() && board[x1+1][newY].getPiece().getType()!= piece.getType() &&
+                    		 !board[x1+2][newY].hasPiece()) {
+                    	 newX = x1+2;
+                    	 if(board[x1+1][newY-1].hasPiece() && board[x1+1][newY-1].getPiece().getType()== piece.getType()||
+                    			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())!=0.5) {
+                    		 newX=x1;
+                    	 }
+                    	 break;
+                     }
+                 } 
+        	 }
          }catch(java.lang.ArrayIndexOutOfBoundsException e) {
         	 System.out.println("Произошла ошибка");
          }
