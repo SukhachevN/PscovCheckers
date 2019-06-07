@@ -134,7 +134,6 @@ public class PscovCheckers extends Application {
     	}
 		return false;
     }
-
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(createContent());
         primaryStage.setTitle("PscovCheckers");
@@ -145,13 +144,13 @@ public class PscovCheckers extends Application {
     	int y1 = 0;
     	int x1 = 0;
     	if(restart==true) {
-    	for(int i = (int) (Math.random()*6);i>0;i--) {
-    		if(checkLine(i)) {
-    			y1=i;
-    			break;
-    		}
-    	}
-    	 x1 = randomPiece(y1);
+    		for(int i = (int) (Math.random()*6);i>0;i--) {
+        		if(checkLine(i)) {
+        			y1=i;
+        			break;
+        		}
+        	}
+        	 x1 = randomPiece(y1);
     	}
     	else {
     		for(int i = 6;i>0;i--) {
@@ -179,24 +178,22 @@ public class PscovCheckers extends Application {
     	boolean check = false;
     	 int newX = randomX(x1,y1);
     	 int newY = 0;
-    		 newY = y1 + randomY(x1,y1);
-             if (newY==y1 && newX==x1) {
-            	 for(int i=0;i<Math.random()*3;i++) {
-            		 newX = randomX(x1,y1);
-            		 if(newX!=x1) {
-            			 break;
-            		 }
-            	 }
-            	 if (newX==x1) {
-            		 newY+=1;
-            	 }
-             } 
-             if(restart==true) {
-            	 newX=x1;
-            	 newY=y1+1;
-            	 System.out.println(newX);
-            	 System.out.println(newY);
-             }
+    	 newY = y1 + randomY(x1,y1);
+         if (newY==y1 && newX==x1) {
+        	 for(int i=0;i<Math.random()*3;i++) {
+        		 newX = randomX(x1,y1);
+        		 if(newX!=x1) {
+        			 break;
+        		 }
+        	 }
+        	 if (newX==x1) {
+        		 newY+=1;
+        	 }
+         } 
+         if(restart==true) {
+        	 newX=x1;
+        	 newY=y1+1;
+         }
          try {
         	 if(y1+2 <= 6 && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
             		 !board[x1][y1+2].hasPiece() ) {
@@ -209,8 +206,7 @@ public class PscovCheckers extends Application {
                 	 check=true;
                  }
              }
-        	 if(check==false)
-        	 if(newY!=y1+2||newY!=y1-2) {
+        	 if(check==false) {
         		 for(int i = 0;i<3;i++) {
                 	 if(i==0) {
                 		 newY=y1;
@@ -282,7 +278,7 @@ public class PscovCheckers extends Application {
                  pieceGroup.getChildren().remove(otherPiece);
                  break;
          }
-		return piece;
+		 return piece;	 
     }
     private int randomX(int x , int y) {
     	int a = (int) (Math.random()*2 - 1);
