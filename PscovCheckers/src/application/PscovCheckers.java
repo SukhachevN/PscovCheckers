@@ -64,7 +64,7 @@ public class PscovCheckers extends Application {
              if(y1<0) {
              	 y1=newY+1;
              }
-             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
+             if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType() && newY+1<=6) {
              	 if(board[newX][newY+1].hasPiece()&&board[newX][newY+1].getPiece().getType()!= piece.getType()) {
              		 y1=newY+1;
              	 }
@@ -80,12 +80,12 @@ public class PscovCheckers extends Application {
              	  if(board[newX][newY-1].hasPiece()&&board[newX][newY-1].getPiece().getType()!= piece.getType()) {
              		  y1=newY-1;
              	  }
-             	  if(Math.abs(y0-y1)<=2)
+             	  if(Math.abs(y0-y1)==1)
              		 return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
               }
          }
          if(dist==Math.sqrt(5)) {
-        	 for (int i = 0;i<5;i++) {
+        	 for (int i = 0;i<3;i++) {
         		 int x1 = (newX - 1 >= 0) ? newX - 1 : newX + 1;
             	 int y1 = newY;
             	 if(i==0) {
@@ -141,7 +141,7 @@ public class PscovCheckers extends Application {
     }
     private Piece computer() {
     	int y1 = 0;
-    	for(int i = (int) (Math.random()*6);i>0;i--) {
+    	for(int i = (int) ((Math.random()==0) ? 6 : Math.random()*6);i>0;i--) {
     		if(checkLine(i)) {
     			y1=i;
     			break;
@@ -171,6 +171,7 @@ public class PscovCheckers extends Application {
         		 newY+=1;
         	 }
          }
+         try {
          if(y1+2 <= 6 && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
         		 !board[x1][y1+2].hasPiece() ) {
         	 newY = y1 + 2;
@@ -178,6 +179,39 @@ public class PscovCheckers extends Application {
          if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
         		 !board[x1][y1-2].hasPiece() ) {
         	 newY = y1 - 2;
+         }
+         for(int i = 0;i<3;i++) {
+        	 if(i==0) {
+        		 newY=(y1+1<=7) ? y1+1 : y1;
+        	 }
+        	 
+             if(i==1) {
+        		 newY=y1;
+        	 }
+             if(i==2) {
+            	 newY=(y1-1>=0) ?y1-1 : y1;
+             }
+         if(newY <= 6 && x1-2>=0  && board[x1-1][newY].hasPiece() && board[x1-1][newY].getPiece().getType()!= piece.getType() &&
+        		 !board[x1-2][newY].hasPiece()) {
+        	 newX = x1-2;
+        	 if(board[x1-1][newY-1].hasPiece() && board[x1-1][newY-1].getPiece().getType()== piece.getType() ||
+        			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())==0.5) {
+        		 newX=x1;
+        	 }
+        	 break;
+         }
+         if(newY <= 6 && x1+2>=0  && board[x1+1][newY].hasPiece() && board[x1+1][newY].getPiece().getType()!= piece.getType() &&
+        		 !board[x1+2][newY].hasPiece()) {
+        	 newX = x1+2;
+        	 if(board[x1+1][newY-1].hasPiece() && board[x1+1][newY-1].getPiece().getType()== piece.getType()||
+        			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())==0.5) {
+        		 newX=x1;
+        	 }
+        	 break;
+         }
+         }
+         }catch(java.lang.ArrayIndexOutOfBoundsException e) {
+        	 
          }
          
          MoveResult result;
@@ -196,25 +230,17 @@ public class PscovCheckers extends Application {
              		}
                  break;
              case NORMAL:
-            	 if(board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].hasPiece()) {
-             		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].getPiece().setOpacity(0.0);
-             		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].setPiece(null);
-             		pieceGroup.getChildren().remove(piece);
-             	}
+            	 board[x1][y1].getPiece().setOpacity(0.0);
             	 pieceGroup.getChildren().remove(piece);
+            	 board[x1][y1].setPiece(null);
                  piece.move(newX, newY); 
-                 board[x1][y1].setPiece(null);
                  board[newX][newY].setPiece(piece);
                  pieceGroup.getChildren().add(piece);
                  break;
              case KILL:
+            	 board[x1][y1].getPiece().setOpacity(0.0);
                  piece.move(newX, newY);
                  board[x1][y1].setPiece(null);
-                 if(board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].hasPiece()) {
-              		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].getPiece().setOpacity(0.0);
-              		board[toBoard(piece.getOldX())][toBoard(piece.getOldY())].setPiece(null);
-              		pieceGroup.getChildren().remove(piece);
-              	}
                  pieceGroup.getChildren().remove(piece);
                  board[newX][newY].setPiece(piece);
                  pieceGroup.getChildren().add(piece);
