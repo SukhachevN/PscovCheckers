@@ -159,6 +159,7 @@ public class PscovCheckers extends Application {
    					 if(board[k][i].hasPiece()) {
    						 y1=i;
    						 x1=k;
+   						 break;
    					 }
    				 }
    			 }
@@ -206,6 +207,9 @@ public class PscovCheckers extends Application {
                 	 check=true;
                  }
              }
+        	 if(Math.random()==0) {
+        		 check=false;
+        	 }
         	 if(check==false) {
         		 for(int i = 0;i<3;i++) {
                 	 if(i==0) {
@@ -294,7 +298,7 @@ public class PscovCheckers extends Application {
 		return (int) (x + a);
     }
     private int randomY(int x, int y) {
-    	int random = 0;
+    	int random = 1;
     	if(board[x][y].getInfo()%1!=0.5) {
     		random = (int) Math.random();
     	}

@@ -34,11 +34,7 @@ public class Tile extends Polygon {
         	});
     		relocate(x*100+a,y1);
     	   }
-    	if(y%2==0) {
-            setFill(Color.ANTIQUEWHITE);
-    	}else {
-    		setFill(Color.BLUE);
-    	}
+        setFill(Color.ANTIQUEWHITE);
         setStroke(Color.BLACK);
         setStrokeWidth(2);
     }
