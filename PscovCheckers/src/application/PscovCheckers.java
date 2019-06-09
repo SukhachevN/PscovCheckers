@@ -216,6 +216,17 @@ public class PscovCheckers extends Application {
         	 if ((newY==y1||newY==y1-1) && newX==x1) {
             	 newY=y1 + 1;
              } 
+        	 if((y1+2 <= ((x1!=0 && x1!=6) ?6 : 5)) && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
+            		 !board[x1][y1+2].hasPiece() ) {
+            	 newY = y1 + 2;
+            	 check=true;
+             }else {
+            	 if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
+                		 !board[x1][y1-2].hasPiece() ) {
+                	 newY = y1 - 2;
+                	 check=true;
+                 }
+             }
          }catch(java.lang.ArrayIndexOutOfBoundsException e) {
         	 System.out.println("Произошла ошибка");
          }
