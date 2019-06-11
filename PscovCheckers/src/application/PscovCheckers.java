@@ -45,8 +45,7 @@ public class PscovCheckers extends Application {
         double dist = Math.sqrt(Math.abs(newX - x0)*Math.abs(newX - x0) + Math.abs(newY - y0)*Math.abs(newY - y0));
         if (board[newX][newY].hasPiece()|| ((newX==0||newX==6)&&(newY==0||newY==1||newY==6))
         		||(newX==1||newX==5)&&(newY==0||newY==6) || (newY==0 && newX!=3)
-        		||(x0%2==1 &&newX%2==0 &&piece.getType().equals(application.PieceType.BLACK) && newY==y0)
-        		|| (x0%2==0 && newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0) 
+        		||(x0%2==0 && newX%2==1 &&piece.getType().equals(application.PieceType.WHITE) && newY==y0) 
         		||Math.abs(board[newX][newY].getInfo()-board[x0][y0].getInfo())==1.5
         ) {
         	System.out.println("Так ходить нельзя!");
@@ -141,7 +140,7 @@ public class PscovCheckers extends Application {
     private Piece computer() {
     	int y1 = 0;
     	int x1 = 0;
-    	for(int i = (int) ((!restart) ? 2 + Math.random()*4 : 6);i>0;i--) {
+    	for(int i = (int) ((!restart) ? 2 + Math.random()*3 : 5);i>0;i--) {
     		if(checkLine(i)) {
     			y1=i;
     			break;
@@ -160,77 +159,67 @@ public class PscovCheckers extends Application {
     		return null;
     	}
     	boolean check = false;
-    	 int newX = randomX(x1,y1);
-    	 int newY = 0;
-    	 newY = y1 + randomY(x1,y1);
-    	 if ((newY==y1||newY==y1-1) && newX==x1) {
+    	int newX = randomX(x1,y1); 
+    	int newY = 0;
+    	newY = y1 + randomY(x1,y1);
+    	if (newY==y1 && newX==x1) {
         	 newY=y1 + 1;
-         } 
-         try {
-        	 if(y1+2 <= 6 && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
-            		 !board[x1][y1+2].hasPiece() ) {
-            	 newY = y1 + 2;
-            	 check=true;
-             }else {
-            	 if(y1-2 >= 0 && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
-                		 !board[x1][y1-2].hasPiece() ) {
-                	 newY = y1 - 2;
-                	 check=true;
-                 }
-             }
-        	 if(check==false) {
-        		 for(int i = 0;i<3;i++) {
-                	 if(i==0) {
-                		 newY=y1;
-                	 }
-                     if(i==1) {
-                		 newY=(y1+1<=6) ? y1+1 : y1;
-                	 }
-                     if(i==2) {
-                    	 newY=(y1-1>=0) ?y1-1 : y1;
-                     }
-                     if(x1-2>=0) {
-                    	 if(board[x1-1][newY].hasPiece() && board[x1-1][newY].getPiece().getType()!= piece.getType() &&
-                        		 !board[x1-2][newY].hasPiece()) {
-                        	 newX = x1-2;
-                        	 if(board[x1-1][newY-1].hasPiece() && board[x1-1][newY-1].getPiece().getType()== piece.getType() ||
-                        			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())!=0.5) {
-                        		 newX=x1;
-                        	 }
-                        	 break;
-                         }
-                     }
-                     if(x1+2<=6) {
-                    	 if(board[x1+1][newY].hasPiece() && board[x1+1][newY].getPiece().getType()!= piece.getType() &&
-                        		 !board[x1+2][newY].hasPiece()) {
-                        	 newX = x1+2;
-                        	 if(board[x1+1][newY-1].hasPiece() && board[x1+1][newY-1].getPiece().getType()== piece.getType()||
-                        			 Math.abs(board[newX][newY].getInfo()-board[x1][y1].getInfo())!=0.5) {
-                        		 newX=x1;
-                        	 }
-                        	 break;
-                         }
-                     }
-                 } 
-        	 }
-        	 if ((newY==y1||newY==y1-1) && newX==x1) {
-        		 System.out.println("что то пошло не так, пытаюсь исправить");
-            	 newY=y1 + 1;
-             } 
-        	 if((y1+2 <= ((x1!=0 && x1!=6) ? 6 : 5)) && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
-            		 !board[x1][y1+2].hasPiece() ) {
-            	 newY = y1 + 2;
-             }else {
-            	 if(y1-2 >= ((x1!=0 && x1!=6) ? 0 : 1) && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
-                		 !board[x1][y1-2].hasPiece() ) {
-                	 newY = y1 - 2;
-                 }
-             }
+    	}
+    	try {
+    		if(y1+2 <= ((x1!=0 && x1!=6) ? 6 : 5) && board[x1][y1+1].hasPiece() && board[x1][y1+1].getPiece().getType()!= piece.getType() &&
+              		!board[x1][y1+2].hasPiece() ) {
+              	newY = y1 + 2;
+              	check=true;
+    		}else {
+              	if(y1-2 >= ((x1!=0 && x1!=6) ? 0 : 1) && board[x1][y1-1].hasPiece() && board[x1][y1-1].getPiece().getType()!= piece.getType() &&
+                  		!board[x1][y1-2].hasPiece() ) {
+                  	newY = y1 - 2;
+                  	check=true;
+              	}  
+    		}   	 
+    		if(!check) {
+    			int checkY = 0;
+    			for(int i = 0;i<3;i++) {
+    				if(i==0) {
+    					checkY=y1;
+    				}
+    				if(i==1) {
+    					checkY=(y1+1<=6) ? y1+1 : y1; 
+                  	}
+    				if(i==2) {
+    					checkY=(y1-1>=0) ?y1-1 : y1;
+                    }
+    				if(x1-2>=0) {
+    					if(board[x1-1][checkY].hasPiece() && board[x1-1][checkY].getPiece().getType()!= piece.getType() &&
+                         		 !board[x1-2][checkY].hasPiece()) {
+    						newX = x1-2;
+                        	if(board[x1-1][checkY-1].hasPiece() && board[x1-1][checkY-1].getPiece().getType()== piece.getType() ||
+                        			 Math.abs(board[newX][checkY].getInfo()-board[x1][y1].getInfo())!=0.5) {
+                        		newX=x1;
+                        	}else
+                        		newY = checkY; 
+                        	    break;
+                        }
+                    }
+    				if(x1+2<=6) {
+    					if(board[x1+1][checkY].hasPiece() && board[x1+1][checkY].getPiece().getType()!= piece.getType() &&
+                           	 !board[x1+2][checkY].hasPiece()) {
+    						newX = x1+2;
+                         	if(board[x1+1][checkY-1].hasPiece() && board[x1+1][checkY-1].getPiece().getType()== piece.getType() ||
+                         			 Math.abs(board[newX][checkY].getInfo()-board[x1][y1].getInfo())!=0.5) {
+                         		newX=x1;
+                         	}else
+                         	    newY = checkY;
+                       	        break;
+    					}
+    				}  
+    			}	
+    		}
          }catch(java.lang.ArrayIndexOutOfBoundsException e) {
         	 System.out.println("Произошла ошибка");
          }
          MoveResult result;
-         if (newX < 0 || newY < 0 || newX >= 7 || newY >= 7 || board[newX][newY].hasPiece()) {
+         if (newX < 0 || newY < 0 || newX >= 7 || newY >= 7) {
              result = new MoveResult(MoveType.NONE);
          } else {
              result = tryMove(piece, newX, newY);
