@@ -213,12 +213,15 @@ public class PscovCheckers extends Application {
 									}
 							}
 						}
-						for (int k = 0; k < 7; k++) {
-							if (board[6][k].hasPiece() && board[6][k].getPiece().getType().equals(PieceType.BLACK)) {
-								y1 = k;
-								x1 = 6;
-								find = true;
-								break;
+						if (!find) {
+							for (int k = 0; k < 7; k++) {
+								if (board[6][k].hasPiece()
+										&& board[6][k].getPiece().getType().equals(PieceType.BLACK)) {
+									y1 = k;
+									x1 = 6;
+									find = true;
+									break;
+								}
 							}
 						}
 						ycheck--;
