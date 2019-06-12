@@ -58,7 +58,9 @@ public class PscovCheckers extends Application {
 				|| (x0 % 2 == 1 && newX % 2 == 0 && piece.getType().equals(application.PieceType.BLACK) && newY == y0)
 				|| (x0 % 2 == 0 && newX % 2 == 1 && piece.getType().equals(application.PieceType.WHITE) && newY == y0)
 				|| Math.abs(board[newX][newY].getInfo() - board[x0][y0].getInfo()) == 1.5) {
-			System.out.println("Так ходить нельзя!");
+			if (piece.getType().equals(application.PieceType.WHITE)) {
+				System.out.println("Так ходить нельзя!");
+			}
 			return new MoveResult(MoveType.NONE);
 		}
 		if (!board[newX][newY].hasPiece() && dist < 4) {
@@ -69,7 +71,9 @@ public class PscovCheckers extends Application {
 		if (!tryKill(piece, newX, newY).getType().equals(MoveType.NONE)) {
 			return tryKill(piece, newX, newY);
 		}
-		System.out.println("Так ходить нельзя!");
+		if (piece.getType().equals(application.PieceType.WHITE)) {
+			System.out.println("Так ходить нельзя!");
+		}
 		return new MoveResult(MoveType.NONE);
 	}
 
@@ -173,7 +177,7 @@ public class PscovCheckers extends Application {
 		Piece piece = new Piece(application.PieceType.BLACK, x1, y1);
 		do {
 			if (black == 1 && board[3][6].hasPiece() && board[3][6].getPiece().getType().equals(PieceType.BLACK)) {
-				System.out.println("game over");
+				System.out.println("Компьтер не может сделать ход, игра закончена!");
 				break;
 			}
 
@@ -197,7 +201,6 @@ public class PscovCheckers extends Application {
 						if (checkLine(ycheck)) {
 							for (int i = 0; i < 7; i++) {
 								x1 = i;
-								System.out.println(i + " " + ycheck);
 								if (x1 == lastX && ycheck == lastY) {
 									continue;
 								}
