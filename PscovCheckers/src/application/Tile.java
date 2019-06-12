@@ -36,11 +36,7 @@ public class Tile extends Polygon {
 					new Double[] { 0.0, 50.0, 31.25, 0.0, 93.75, 0.0, 125.0, 50.0, 93.75, 100.0, 31.25, 100.0, });
 			relocate(x * 100 + a, y1);
 		}
-		if(y%2==0) {
 		setFill(Color.ANTIQUEWHITE);
-		}else {
-			setFill(Color.WHITE);
-		}
 		setStroke(Color.BLACK);
 		setStrokeWidth(2);
 	}

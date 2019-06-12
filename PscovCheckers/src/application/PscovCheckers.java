@@ -179,26 +179,31 @@ public class PscovCheckers extends Application {
 			}
 			x1 = randomPiece(y1);
 			boolean find = false;
-			if (restart || (x1 == lastX && y1 == lastY)) {
-				do {
-					for (int i = 0; i < 7; i++) {
-						x1 = i;
-						if (x1 == lastX && ycheck == lastY) {
-							continue;
-						}
-						if (ycheck >= 0)
-							if (board[x1][ycheck].hasPiece()
-									&& board[x1][ycheck].getPiece().getType().equals(PieceType.BLACK)) {
-								y1 = ycheck;
-								find = true;
-								break;
+			try {
+				if (restart || (x1 == lastX && y1 == lastY)) {
+					do {
+						for (int i = 0; i < 7; i++) {
+							x1 = i;
+							if (x1 == lastX && ycheck == lastY) {
+								continue;
 							}
-					}
-					ycheck--;
-					if (ycheck == -1) {
-						break;
-					}
-				} while (!find);
+							if (ycheck >= 0)
+								if (board[x1][ycheck].hasPiece()
+										&& board[x1][ycheck].getPiece().getType().equals(PieceType.BLACK)) {
+									y1 = ycheck;
+									find = true;
+									break;
+								}
+						}
+						ycheck--;
+						if (ycheck == -1) {
+							break;
+						}
+					} while (!find);
+				}
+			} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+				x1 = 3;
+				y1 = 0;
 			}
 			restart = false;
 			piece = new Piece(application.PieceType.BLACK, x1, y1);
