@@ -50,7 +50,7 @@ public class PscovCheckers extends Application {
 		int x0 = toBoard(piece.getOldX());
 		int y0 = toBoard(piece.getOldY());
 		double dist = Math.abs(newX - x0) * Math.abs(newX - x0) + Math.abs(newY - y0) * Math.abs(newY - y0);
-		if (board[newX][newY].hasPiece() || ((newX == 0 || newX == 6) && (newY == 0 || newY == 1 || newY == 6))
+		if (newX > 6 || newY > 6 || board[newX][newY].hasPiece() || ((newX == 0 || newX == 6) && (newY == 0 || newY == 1 || newY == 6))
 				|| (newX == 1 || newX == 5) && (newY == 0 || newY == 6) || (newY == 0 && newX != 3)
 				|| (x0 % 2 == 0 && newX % 2 == 1 && piece.getType().equals(application.PieceType.WHITE) && newY == y0)
 				|| Math.abs(board[newX][newY].getInfo() - board[x0][y0].getInfo()) == 1.5) {
