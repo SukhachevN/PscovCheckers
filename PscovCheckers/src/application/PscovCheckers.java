@@ -14,6 +14,7 @@ public class PscovCheckers extends Application {
 	private boolean restart = false;
 	private int lastY = 0;
 	private int lastX = 0;
+	private int unluckyMoves = 0;
 
 	private Parent createContent() {
 		Pane root = new Pane();
@@ -159,6 +160,7 @@ public class PscovCheckers extends Application {
 	}
 
 	private Piece computer() {
+		unluckyMoves = 0;
 		int y1 = 0;
 		int x1 = 0;
 		int newX = 0;
@@ -169,8 +171,11 @@ public class PscovCheckers extends Application {
 		}
 		Piece piece = new Piece(application.PieceType.BLACK, x1, y1);
 		do {
+			if (unluckyMoves > 50) {
+				break;
+			}
 			for (int i = (int) ((!restart) ? 2 + Math.random() * 4 : 6); i > 0; i--) {
-				if (restart && i > lastY) {
+				if (i > lastY) {
 					continue;
 				}
 				if (checkLine(i)) {
@@ -213,7 +218,7 @@ public class PscovCheckers extends Application {
 					restart = true;
 					computer();
 				} catch (java.lang.StackOverflowError e) {
-					System.out.println("Ошибка, компьютер не смог найти шашку которой можно сходить");
+					System.out.println("Game over");
 					return null;
 				}
 				return null;
@@ -255,12 +260,7 @@ public class PscovCheckers extends Application {
 									&& board[x1 - 1][checkY].getPiece().getType() != piece.getType()
 									&& !board[x1 - 2][checkY].hasPiece()) {
 								newX = x1 - 2;
-								if (board[x1 - 1][checkY - 1].hasPiece()
-										&& board[x1 - 1][checkY - 1].getPiece().getType() == piece.getType()
-										|| Math.abs(board[newX][checkY].getInfo() - board[x1][y1].getInfo()) != 0.5) {
-									newX = x1;
-								} else
-									newY = checkY;
+								newY = checkY;
 								break;
 							}
 						}
@@ -269,12 +269,7 @@ public class PscovCheckers extends Application {
 									&& board[x1 + 1][checkY].getPiece().getType() != piece.getType()
 									&& !board[x1 + 2][checkY].hasPiece()) {
 								newX = x1 + 2;
-								if (board[x1 + 1][checkY - 1].hasPiece()
-										&& board[x1 + 1][checkY - 1].getPiece().getType() == piece.getType()
-										|| Math.abs(board[newX][checkY].getInfo() - board[x1][y1].getInfo()) != 0.5) {
-									newX = x1;
-								} else
-									newY = checkY;
+								newY = checkY;
 								break;
 							}
 						}
@@ -284,8 +279,10 @@ public class PscovCheckers extends Application {
 				System.out.println("Произошла ошибка");
 			}
 			if (tryMove(piece, newX, newY).getType().equals(MoveType.NONE)) {
+				unluckyMoves++;
 				lastX = x1;
 				lastY = y1;
+				newY = y1 + 1;
 			}
 		} while (tryMove(piece, newX, newY).getType().equals(MoveType.NONE) || ycheck == -1);
 		lastX = 6;
