@@ -55,6 +55,7 @@ public class PscovCheckers extends Application {
 		if (newX > 6 || newY > 6 || board[newX][newY].hasPiece()
 				|| ((newX == 0 || newX == 6) && (newY == 0 || newY == 1 || newY == 6))
 				|| (newX == 1 || newX == 5) && (newY == 0 || newY == 6) || (newY == 0 && newX != 3)
+				|| (x0 % 2 == 1 && newX % 2 == 0 && piece.getType().equals(application.PieceType.BLACK) && newY == y0)
 				|| (x0 % 2 == 0 && newX % 2 == 1 && piece.getType().equals(application.PieceType.WHITE) && newY == y0)
 				|| Math.abs(board[newX][newY].getInfo() - board[x0][y0].getInfo()) == 1.5) {
 			System.out.println("Так ходить нельзя!");
@@ -171,10 +172,12 @@ public class PscovCheckers extends Application {
 		int ycheck = 6;
 		Piece piece = new Piece(application.PieceType.BLACK, x1, y1);
 		do {
-			if(black==1) {
-				lastY=6;
+			if (black == 1 && board[3][6].hasPiece() && board[3][6].getPiece().getType().equals(PieceType.BLACK)) {
+				System.out.println("game over");
+				break;
 			}
-			if (unluckyMoves > 50) {
+
+			if (unluckyMoves == 49) {
 				break;
 			}
 			for (int i = (int) ((!restart) ? 2 + Math.random() * 4 : 6); i > 0; i--) {
@@ -191,18 +194,29 @@ public class PscovCheckers extends Application {
 			try {
 				if (restart || (x1 == lastX && y1 == lastY)) {
 					do {
-						for (int i = 0; i < 7; i++) {
-							x1 = i;
-							if (x1 == lastX && ycheck == lastY) {
-								continue;
-							}
-							if (ycheck >= 0)
-								if (board[x1][ycheck].hasPiece()
-										&& board[x1][ycheck].getPiece().getType().equals(PieceType.BLACK)) {
-									y1 = ycheck;
-									find = true;
-									break;
+						if (checkLine(ycheck)) {
+							for (int i = 0; i < 7; i++) {
+								x1 = i;
+								System.out.println(i + " " + ycheck);
+								if (x1 == lastX && ycheck == lastY) {
+									continue;
 								}
+								if (ycheck >= 0)
+									if (board[x1][ycheck].hasPiece()
+											&& board[x1][ycheck].getPiece().getType().equals(PieceType.BLACK)) {
+										y1 = ycheck;
+										find = true;
+										break;
+									}
+							}
+						}
+						for (int k = 0; k < 7; k++) {
+							if (board[6][k].hasPiece() && board[6][k].getPiece().getType().equals(PieceType.BLACK)) {
+								y1 = k;
+								x1 = 6;
+								find = true;
+								break;
+							}
 						}
 						ycheck--;
 						if (ycheck == -1) {
@@ -211,8 +225,7 @@ public class PscovCheckers extends Application {
 					} while (!find);
 				}
 			} catch (java.lang.ArrayIndexOutOfBoundsException e) {
-				x1 = 3;
-				y1 = 0;
+				unluckyMoves++;
 			}
 			restart = false;
 			piece = new Piece(application.PieceType.BLACK, x1, y1);
@@ -226,12 +239,8 @@ public class PscovCheckers extends Application {
 				}
 				return null;
 			}
-			newX = randomX(x1, y1);
-			newY = 0;
-			newY = y1 + randomY(x1, y1);
-			if (newY == y1 && newX == x1) {
-				newY = y1 + 1;
-			}
+			newX = x1;
+			newY = y1 + 1;
 			try {
 				boolean check = false;
 				if (y1 + 2 <= ((x1 != 0 && x1 != 6) ? 6 : 5) && board[x1][y1 + 1].hasPiece()
@@ -285,11 +294,21 @@ public class PscovCheckers extends Application {
 				unluckyMoves++;
 				lastX = x1;
 				lastY = y1;
-				newY = y1 + 1;
+				for (int i = 0; i < 2; i++) {
+					newX = (x1 + 1 <= 6) ? x1 + 1 : x1 - 1;
+					newY = y1 + i;
+					if (!tryMove(piece, newX, newY).getType().equals(MoveType.NONE)) {
+						break;
+					}
+					newX = (x1 - 1 >= 0) ? x1 - 1 : x1 + 1;
+					if (!tryMove(piece, newX, newY).getType().equals(MoveType.NONE)) {
+						break;
+					}
+				}
 			}
-		} while (tryMove(piece, newX, newY).getType().equals(MoveType.NONE) || ycheck == -1);
-		lastX = 6;
-		lastY = 6;
+		} while (tryMove(piece, newX, newY).getType().equals(MoveType.NONE));
+		lastX = 7;
+		lastY = 7;
 		MoveResult result;
 		if (newX < 0 || newY < 0 || newX >= 7 || newY >= 7) {
 			result = new MoveResult(MoveType.NONE);
@@ -330,32 +349,10 @@ public class PscovCheckers extends Application {
 		return piece;
 	}
 
-	private int randomX(int x, int y) {
-		int a = (int) (Math.random() * 2 - 1);
-		if (x + 1 > 6) {
-			a = (int) (-1 + Math.random());
-		}
-		if (x - 1 < 0) {
-			a = (int) Math.random();
-		}
-		if (board[x][y].getInfo() % 1 == 0.5 || board[x + a][y].hasPiece()) {
-			a = 0;
-		}
-		return (int) (x + a);
-	}
-
-	private int randomY(int x, int y) {
-		int random = 1;
-		if (board[x][y].getInfo() % 1 != 0.5) {
-			random = (int) Math.random();
-		}
-		return random;
-	}
-
 	private int randomPiece(int line) {
 		int x = 3;
 		if (line == 3 || line == 2 || line == 4 || line == 5) {
-			x = (int) (Math.random() * 7);
+			x = (int) (Math.random() * 6);
 		}
 		if (line == 1) {
 			x = (int) (1 + Math.random() * 4);
