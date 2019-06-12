@@ -129,12 +129,14 @@ public class PscovCheckers extends Application {
 				}
 				if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
 					if (Math.abs(board[x0][y0].getInfo() - board[x1][y1].getInfo()) != 1.5
+							&& Math.abs(board[newX][newY].getInfo() - board[x1][y1].getInfo()) != 1.5
 							&& Math.abs(x1 - x0) * Math.abs(x1 - x0) + Math.abs(y1 - y0) * Math.abs(y1 - y0) <= 4)
 						return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
 				}
 				x1 = (newX + 1 <= 6) ? newX + 1 : newX - 1;
 				if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
 					if (Math.abs(board[x0][y0].getInfo() - board[x1][y1].getInfo()) != 1.5
+							&& Math.abs(board[newX][newY].getInfo() - board[x1][y1].getInfo()) != 1.5
 							&& Math.abs(x1 - x0) * Math.abs(x1 - x0) + Math.abs(y1 - y0) * Math.abs(y1 - y0) <= 4)
 						return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
 				}
