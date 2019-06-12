@@ -15,6 +15,7 @@ public class PscovCheckers extends Application {
 	private int lastY = 0;
 	private int lastX = 0;
 	private int unluckyMoves = 0;
+	private int black = 13;
 
 	private Parent createContent() {
 		Pane root = new Pane();
@@ -168,11 +169,11 @@ public class PscovCheckers extends Application {
 		int newX = 0;
 		int newY = 0;
 		int ycheck = 6;
-		if (lastY == -1) {
-			lastY = 6;
-		}
 		Piece piece = new Piece(application.PieceType.BLACK, x1, y1);
 		do {
+			if(black==1) {
+				lastY=6;
+			}
 			if (unluckyMoves > 50) {
 				break;
 			}
@@ -397,6 +398,7 @@ public class PscovCheckers extends Application {
 				Piece otherPiece = result.getPiece();
 				board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
 				pieceGroup.getChildren().remove(otherPiece);
+				black--;
 				computer();
 				break;
 			}
