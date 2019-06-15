@@ -14,7 +14,6 @@ public class PscovCheckers extends Application {
 	private boolean restart = false;
 	private int lastY = 0;
 	private int lastX = 0;
-	private int unluckyMoves = 0;
 	private int black = 13;
 
 	private Parent createContent() {
@@ -168,7 +167,6 @@ public class PscovCheckers extends Application {
 	}
 
 	private Piece computer() {
-		unluckyMoves = 0;
 		int y1 = 0;
 		int x1 = 0;
 		int newX = 0;
@@ -178,10 +176,6 @@ public class PscovCheckers extends Application {
 		do {
 			if (black == 1 && board[3][6].hasPiece() && board[3][6].getPiece().getType().equals(PieceType.BLACK)) {
 				System.out.println("Компьтер не может сделать ход, игра закончена!");
-				break;
-			}
-
-			if (unluckyMoves == 49) {
 				break;
 			}
 			for (int i = (int) ((!restart) ? 2 + Math.random() * 4 : 6); i > 0; i--) {
@@ -231,7 +225,6 @@ public class PscovCheckers extends Application {
 					} while (!find);
 				}
 			} catch (java.lang.ArrayIndexOutOfBoundsException e) {
-				unluckyMoves++;
 			}
 			restart = false;
 			piece = new Piece(application.PieceType.BLACK, x1, y1);
@@ -297,7 +290,6 @@ public class PscovCheckers extends Application {
 				System.out.println("Произошла ошибка");
 			}
 			if (tryMove(piece, newX, newY).getType().equals(MoveType.NONE)) {
-				unluckyMoves++;
 				lastX = x1;
 				lastY = y1;
 				for (int i = 0; i < 2; i++) {
